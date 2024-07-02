@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Average Calculator</title>
+</head>
+<body>
+    <h1>Average Calculator</h1>
+    <form id="averageForm">
+        <label for="numbers">Enter numbers (comma separated):</label>
+        <input type="text" id="numbers" name="numbers" required>
+        <button type="submit">Calculate Average</button>
+    </form>
+    <p id="result"></p>
+
+    <script>
+        document.getElementById('averageForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const numbersInput = document.getElementById('numbers').value;
+            const numbers = numbersInput.split(',').map(Number);
+
+            fetch('http://localhost:3000/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ numbers }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('result').textContent = 'Error: ' + data.error;
+                } else {
+                    document.getElementById('result').textContent = 'Average: ' + data.average;
+                }
+            })
+            .catch(error => {
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            });
+        });
+    </script>
+</body>
+</html>
